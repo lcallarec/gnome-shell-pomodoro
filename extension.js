@@ -90,29 +90,30 @@ const Pomodoro = new Lang.Class({
     this.actor.add_actor(hbox);
     this.actor.add_style_class_name('panel-status-button');
 
-    this.actor.connect('button-press-event', Lang.bind(this, function() {
-
-      this.menu.removeAll();
-
-      let item = new PopupMenu.PopupSwitchMenuItem("Play", this._timer.isStarted());
-      item.connect('toggled', Lang.bind(this, function() {
-
-        if (this._timer.isStarted()) {
-          this._timer.stop();
-        } else {
-          this._timer.start(Lang.bind(this, function() {
-            this._label.set_text(this._timer.time)
-          }));
-        }
-
- 	    }));
-
-      this.menu.addMenuItem(item);
-
-    }));
+    this.actor.connect('button-press-event', Lang.bind(this, this._intervalCallback);
 
     Main.panel.addToStatusArea('Pomodoro', this);
   },
+
+  _intervalCallaback: function() {
+    this.menu.removeAll();
+
+    let item = new PopupMenu.PopupSwitchMenuItem("Play", this._timer.isStarted());
+    item.connect('toggled', Lang.bind(this, function() {
+
+      if (this._timer.isStarted()) {
+        this._timer.stop();
+      } else {
+        this._timer.start(Lang.bind(this, function() {
+          this._label.set_text(this._timer.time)
+        }));
+      }
+
+    }));
+
+    this.menu.addMenuItem(item);
+  }
+
 });
 
 let pomodoro;
