@@ -1,0 +1,6 @@
+.pomodoro-status-icon {
+    background-image: url("assets/pomodoro.svg");
+    background-size: 12px;
+    height: 12px;
+    width: 12px;
+}
