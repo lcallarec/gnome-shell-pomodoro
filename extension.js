@@ -45,7 +45,8 @@ const PomodoroTimer = new Lang.Class({
   },
 
   reset: function() {
-    this._elapsed = 0;
+    this._elapsed  = 0;
+    this._isPaused = false;
     this.stop();
   },
 
@@ -124,9 +125,12 @@ const Pomodoro = new Lang.Class({
       style_class: 'pomodoro-button-box'
     });
 
-    this._toggleButton = this._createPlayPauseShellButton();
+    this._playPauseButton = this._createPlayPauseShellButton();
+    this._resetButton     = this._createResetShellButton();
 
-    this._menuActionRowBox.add_actor(this._toggleButton);
+    this._menuActionRowBox.add_actor(this._playPauseButton);
+    this._menuActionRowBox.add_actor(this._resetButton);
+
     this._menuActionRow.actor.add_actor(this._menuActionRowBox);
 
     this.menu.addMenuItem(this._menuActionRow);
@@ -147,14 +151,7 @@ const Pomodoro = new Lang.Class({
 
       if (this._timer.isStarted()) {
         this._timer.pause();
-        button.child = new St.Icon({
-            icon_name: "media-playback-start-symbolic"
-        });
       } else {
-        button.child = new St.Icon({
-            icon_name: "media-playback-pause-symbolic"
-        });
-
         if (this._timer.isPaused()) {
           this._timer.unpause();
         } else {
@@ -162,8 +159,25 @@ const Pomodoro = new Lang.Class({
             this._label.set_text(this._timer.time)
           }));
         }
-
       }
+
+      this._setPlayPauseShellButtonIcon();
+
+    }));
+
+    return button;
+  },
+
+  _createResetShellButton: function() {
+    let button = this._createShellButton(
+      "view-refresh-symbolic",
+      "reset timer"
+    );
+
+    button.connect('clicked', Lang.bind(this, () => {
+      this._timer.reset();
+      this._label.set_text(this._timer.time);
+      this._setPlayPauseShellButtonIcon();
     }));
 
     return button;
@@ -185,6 +199,21 @@ const Pomodoro = new Lang.Class({
 
       return button;
     },
+
+  _setPlayPauseShellButtonIcon: function() {
+
+    let iconName;
+
+    if (this._timer.isStarted()) {
+      iconName = "media-playback-pause-symbolic"
+    } else {
+      iconName = "media-playback-start-symbolic"
+    }
+
+    this._playPauseButton.child = new St.Icon({
+        icon_name: iconName
+    });
+  },
 
 });
 
