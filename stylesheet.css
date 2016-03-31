@@ -4,3 +4,28 @@
     height: 12px;
     width: 12px;
 }
+
+.pomodoro-button {
+    border-radius: 32px;
+    padding: 14px;
+    color: white;
+    border: 1px;
+}
+
+.pomodoro-button:hover{
+
+    padding: 14px;
+}
+
+.pomodoro-button > StIcon {
+    icon-size: 16px;
+}
+
+.pomodoro-button > StLabel {
+    padding:6px;
+}
+
+.pomodoro-button-box{
+padding: 0px;
+spacing: 12px;
+}

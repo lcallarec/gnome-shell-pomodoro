@@ -90,29 +90,78 @@ const Pomodoro = new Lang.Class({
     this.actor.add_actor(hbox);
     this.actor.add_style_class_name('panel-status-button');
 
-    this.actor.connect('button-press-event', Lang.bind(this, this._intervalCallback);
-
     Main.panel.addToStatusArea('Pomodoro', this);
+
+    this._buildPopupMenu();
   },
 
-  _intervalCallaback: function() {
+  _buildPopupMenu: function() {
+
     this.menu.removeAll();
 
-    let item = new PopupMenu.PopupSwitchMenuItem("Play", this._timer.isStarted());
-    item.connect('toggled', Lang.bind(this, function() {
+    this._menuActionRow = new PopupMenu.PopupBaseMenuItem({
+      reactive: false
+    });
+
+    this._menuActionRowBox = new St.BoxLayout({
+      style_class: 'pomodoro-button-box'
+    });
+
+    this._toggleButton = this._createPlayPauseShellButton();
+
+    this._menuActionRowBox.add_actor(this._toggleButton);
+    this._menuActionRow.actor.add_actor(this._menuActionRowBox);
+
+    this.menu.addMenuItem(this._menuActionRow);
+  },
+
+  getPlayPauseIconName: function() {
+    return this._timer.isStarted() ? "media-playback-pause-symbolic" : "media-playback-start-symbolic";
+  },
+
+  _createPlayPauseShellButton: function() {
+
+    let button = this._createShellButton(
+      this.getPlayPauseIconName(),
+      this._timer.isStarted() ? "pause" : "start"
+    );
+
+    button.connect('clicked', Lang.bind(this, () => {
 
       if (this._timer.isStarted()) {
         this._timer.stop();
+        button.child = new St.Icon({
+            icon_name: "media-playback-start-symbolic"
+        });
       } else {
+        button.child = new St.Icon({
+            icon_name: "media-playback-pause-symbolic"
+        });
         this._timer.start(Lang.bind(this, function() {
           this._label.set_text(this._timer.time)
         }));
       }
-
     }));
 
-    this.menu.addMenuItem(item);
-  }
+    return button;
+  },
+
+  _createShellButton: function(iconName, accessibleName) {
+
+      let button = new St.Button({
+          reactive: true,
+          can_focus: true,
+          track_hover: true,
+          accessible_name: accessibleName,
+          style_class: 'system-menu-action'
+      });
+
+      button.child = new St.Icon({
+          icon_name: iconName
+      });
+
+      return button;
+    },
 
 });
 
