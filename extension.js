@@ -9,14 +9,17 @@ const Clutter   = imports.gi.Clutter;
 const PomodoroTimer = new Lang.Class({
   Name: 'PomodoroTimer',
 
-  _init : function(duration) {
+  _init: function(duration) {
     this._duration  = duration;
     this._elapsed   = 0;
+    this._callback  = null;
+    this._isPaused  = false;
     this._timerId   = null;
   },
 
-  start : function(callback) {
-    this.reset();
+  start: function(callback) {
+    this._callback = callback;
+    this._isPaused = false;
     this._timerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, Lang.bind(this, () => {
       this._elapsed++;
       callback();
@@ -24,20 +27,34 @@ const PomodoroTimer = new Lang.Class({
     }));
   },
 
-  stop : function() {
+  stop: function() {
     if (this._timerId != null) {
        GLib.source_remove(this._timerId);
        this._timerId = null;
     }
   },
 
+  pause: function() {
+    this.stop();
+    this._isPaused = true;
+  },
+
+  unpause: function() {
+    this.start(this._callback);
+    this._isPaused = false;
+  },
+
   reset: function() {
-    this._elapsed  = 0;
+    this._elapsed = 0;
     this.stop();
   },
 
   isStarted: function() {
     return null != this._timerId;
+  },
+
+  isPaused: function() {
+    return this._isPaused;
   },
 
   get duration() {
@@ -129,7 +146,7 @@ const Pomodoro = new Lang.Class({
     button.connect('clicked', Lang.bind(this, () => {
 
       if (this._timer.isStarted()) {
-        this._timer.stop();
+        this._timer.pause();
         button.child = new St.Icon({
             icon_name: "media-playback-start-symbolic"
         });
@@ -137,9 +154,15 @@ const Pomodoro = new Lang.Class({
         button.child = new St.Icon({
             icon_name: "media-playback-pause-symbolic"
         });
-        this._timer.start(Lang.bind(this, function() {
-          this._label.set_text(this._timer.time)
-        }));
+
+        if (this._timer.isPaused()) {
+          this._timer.unpause();
+        } else {
+          this._timer.start(Lang.bind(this, function() {
+            this._label.set_text(this._timer.time)
+          }));
+        }
+
       }
     }));
 
