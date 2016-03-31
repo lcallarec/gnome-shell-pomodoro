@@ -2,9 +2,11 @@ const GLib = imports.gi.GLib;
 const St   = imports.gi.St;
 const Main = imports.ui.main;
 const Lang = imports.lang;
+const Signals   = imports.signals;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const Clutter   = imports.gi.Clutter;
+const MessageTray = imports.ui.messageTray;
 
 const PomodoroTimer = new Lang.Class({
   Name: 'PomodoroTimer',
@@ -22,7 +24,12 @@ const PomodoroTimer = new Lang.Class({
     this._isPaused = false;
     this._timerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, Lang.bind(this, () => {
       this._elapsed++;
+
       callback();
+      if (this.remaining == 0) {
+        this.stop();
+        return false;
+      }
       return true;
     }));
   },
@@ -72,8 +79,12 @@ const PomodoroTimer = new Lang.Class({
 
   get time() {
     let seconds = this.remaining % 60;
-    seconds = (seconds < 10) ? "0" + seconds : seconds;
+    seconds = seconds <= 0 ? "00" : seconds;
+    seconds = (seconds < 10 && seconds != "00") ? "0" + seconds : seconds;
+
     let minutes = Math.floor((this.remaining / 60) % 60);
+
+    minutes = minutes < 0 ? "0" : minutes;
 
     return minutes + ':' + seconds;
   }
@@ -156,7 +167,12 @@ const Pomodoro = new Lang.Class({
           this._timer.unpause();
         } else {
           this._timer.start(Lang.bind(this, function() {
-            this._label.set_text(this._timer.time)
+
+            if (this._timer.remaining == 0) {
+              this._notifySend("Cycle is ended", "Take a 5 minutes rest !", "emblem-important-symbolic")
+            }
+
+            this._label.set_text(this._timer.time);
           }));
         }
       }
@@ -215,13 +231,25 @@ const Pomodoro = new Lang.Class({
     });
   },
 
+  _notifySend: function(summary, body, iconName) {
+
+    let source = new MessageTray.Source("Pomodoro applet", iconName);
+
+    Main.messageTray.add(source);
+
+    let notification = new MessageTray.Notification(source, summary, body);
+    notification.setResident(true);
+
+    source.notify(notification);
+  },
+
 });
 
 let pomodoro;
 let timer;
 
 function enable() {
-  timer    = new PomodoroTimer(25 * 60);
+  timer    = new PomodoroTimer(0.1 * 60);
   pomodoro = new Pomodoro(timer);
 }
 
