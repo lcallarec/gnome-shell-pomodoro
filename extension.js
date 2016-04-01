@@ -20,11 +20,12 @@ const PomodoroTimer = new Lang.Class({
   },
 
   start: function() {
+    this.emit('start');
     this._isPaused = false;
     this._timerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, Lang.bind(this, () => {
       this._elapsed++;
       this.emit('increment');
-      if (this.remaining == 0) {
+      if (this.remaining == -1) {
         this.stop();
         this.emit('ended');
         return false;
@@ -104,6 +105,11 @@ const Pomodoro = new Lang.Class({
     this._timer.connect('increment', Lang.bind(this, function() {
       this._label.set_text(this._timer.time);
       print("increment");
+    }));
+
+    this._timer.connect('start', Lang.bind(this, function() {
+      this._label.set_text(this._timer.time);
+      print("start");
     }));
 
     this._timer.connect('ended', Lang.bind(this, function() {
@@ -259,20 +265,24 @@ const PomodoroTimerTransitions = new Lang.Class({
   Name: 'PomodoroTimerTransitions',
 
   _init: function() {
-    this._steps = [];
-    this._i     = 0;
+    this._transitions = [];
+    this._i = 0;
   },
 
   add: function (transition, duration) {
-    this._steps.push({transition: transition, duration: duration});
+    this._transitions.push({transition: transition, duration: duration});
   },
 
   next: function() {
-    return {transition: PomodoroTimerTransition.FOCUS, duration: 0.1 * 60};
+    this._i++;
+
+    if (this._i >= this._transitions.length) {
+      this._i = 0;
+    }
   },
 
   get current() {
-    return {transition: PomodoroTimerTransition.FOCUS, duration: 0.1 * 60};
+    return this._transitions[this._i];
   }
 
 });
@@ -290,6 +300,10 @@ const PomodoroTimerCycle = new Lang.Class({
 
     this._timer.connect('increment', Lang.bind(this, () => {
       this.emit('increment');
+    }));
+
+    this._timer.connect('start', Lang.bind(this, () => {
+      this.emit('start');
     }));
 
     this._timer.connect('ended', Lang.bind(this, () => {
@@ -361,6 +375,10 @@ let timer;
 
 function enable() {
   transitions = new PomodoroTimerTransitions();
+  transitions.add(PomodoroTimerTransition.FOCUS, 10);
+  transitions.add(PomodoroTimerTransition.SHORT_BREAK, 5);
+  transitions.add(PomodoroTimerTransition.FOCUS, 7);
+
   timerCycle  = new PomodoroTimerCycle(transitions);
   pomodoro = new Pomodoro(timerCycle);
 }
