@@ -19,15 +19,14 @@ const PomodoroTimer = new Lang.Class({
     this._timerId   = null;
   },
 
-  start: function(callback) {
-    this._callback = callback;
+  start: function() {
     this._isPaused = false;
     this._timerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, Lang.bind(this, () => {
       this._elapsed++;
-
-      callback();
+      this.emit('increment');
       if (this.remaining == 0) {
         this.stop();
+        this.emit('ended');
         return false;
       }
       return true;
@@ -47,7 +46,7 @@ const PomodoroTimer = new Lang.Class({
   },
 
   unpause: function() {
-    this.start(this._callback);
+    this.start();
     this._isPaused = false;
   },
 
@@ -91,6 +90,8 @@ const PomodoroTimer = new Lang.Class({
 
 });
 
+Signals.addSignalMethods(PomodoroTimer.prototype);
+
 const Pomodoro = new Lang.Class({
   Name: 'Pomodoro',
   Extends: PanelMenu.Button,
@@ -99,6 +100,16 @@ const Pomodoro = new Lang.Class({
     PanelMenu.Button.prototype._init.call(this, 0.0);
 
     this._timer = timer;
+
+    this._timer.connect('increment', Lang.bind(this, function() {
+      this._label.set_text(this._timer.time);
+      print("increment");
+    }));
+
+    this._timer.connect('ended', Lang.bind(this, function() {
+      this._notifySend("Cycle is ended", "Take a 5 minutes rest !", "emblem-important-symbolic");
+      print("ended in Pomodoro");
+    }));
 
     let hbox = new St.BoxLayout({
       style_class: 'panel-status-menu-box'}
@@ -166,14 +177,7 @@ const Pomodoro = new Lang.Class({
         if (this._timer.isPaused()) {
           this._timer.unpause();
         } else {
-          this._timer.start(Lang.bind(this, function() {
-
-            if (this._timer.remaining == 0) {
-              this._notifySend("Cycle is ended", "Take a 5 minutes rest !", "emblem-important-symbolic")
-            }
-
-            this._label.set_text(this._timer.time);
-          }));
+          this._timer.start();
         }
       }
 
@@ -245,12 +249,120 @@ const Pomodoro = new Lang.Class({
 
 });
 
+const PomodoroTimerTransition = {
+  FOCUS       : 0,
+  SHORT_BREAK : 1,
+  LONG_BREAK  : 2
+};
+
+const PomodoroTimerTransitions = new Lang.Class({
+  Name: 'PomodoroTimerTransitions',
+
+  _init: function() {
+    this._steps = [];
+    this._i     = 0;
+  },
+
+  add: function (transition, duration) {
+    this._steps.push({transition: transition, duration: duration});
+  },
+
+  next: function() {
+    return {transition: PomodoroTimerTransition.FOCUS, duration: 0.1 * 60};
+  },
+
+  get current() {
+    return {transition: PomodoroTimerTransition.FOCUS, duration: 0.1 * 60};
+  }
+
+});
+
+const PomodoroTimerCycle = new Lang.Class({
+  Name: 'PomodoroTimerCycle',
+
+  _init: function(transitions) {
+    this._transitions = transitions;
+    this._invokeTimer();
+  },
+
+  _invokeTimer: function() {
+    this._timer = new PomodoroTimer(this._transitions.current.duration);
+
+    this._timer.connect('increment', Lang.bind(this, () => {
+      this.emit('increment');
+    }));
+
+    this._timer.connect('ended', Lang.bind(this, () => {
+      this.emit('ended');
+    }));
+  },
+
+  start: function() {
+      this._timer.start();
+      print("started in PomodoroTimerCycle");
+      this._timer.connect('ended', Lang.bind(this, () => {
+        this._transitions.next();
+      print("ended in PomodoroTimerCycle");
+        this._invokeTimer();
+        this.start();
+      }));
+  },
+
+  stop: function() {
+    return this._timer.stop();
+  },
+
+  pause: function() {
+    return this._timer.pause();
+  },
+
+  unpause: function() {
+    return this._timer.unpause();
+  },
+
+  reset: function() {
+    return this._timer.reset();
+  },
+
+  isStarted: function() {
+    return this._timer.isStarted();
+  },
+
+  isPaused: function() {
+    return this._timer.isPaused();
+  },
+
+  get duration() {
+    return this._timer.duration;
+  },
+
+  get elapsed() {
+    return this._timer.elapsed;
+  },
+
+  get remaining() {
+    return this._timer.remaining;
+  },
+
+  get time() {
+    return this._timer.time;
+  },
+
+  get timer() {
+    return this._timer;
+  }
+});
+
+Signals.addSignalMethods(PomodoroTimerCycle.prototype);
+
+let transitions;
 let pomodoro;
 let timer;
 
 function enable() {
-  timer    = new PomodoroTimer(0.1 * 60);
-  pomodoro = new Pomodoro(timer);
+  transitions = new PomodoroTimerTransitions();
+  timerCycle  = new PomodoroTimerCycle(transitions);
+  pomodoro = new Pomodoro(timerCycle);
 }
 
 function disable() {
