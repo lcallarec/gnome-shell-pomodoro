@@ -174,6 +174,39 @@ const Pomodoro = new Lang.Class({
 
 });
 
+
+const HumanTime = {
+
+  prettify: function(seconds) {
+
+    let MINUTE_S = 60;
+    let HOUR_S   = 60 * MINUTE_S;
+    let DAY_S    = 24 * HOUR_S;
+    let WEEK_S   = 7 * DAY_S;
+    let MONTH_S  = 30 * DAY_S;
+
+    let lookup = ["months", "weeks", "days", "hours", "minutes"];
+    let values = [];
+
+    values.push(seconds / MONTH_S);  seconds %= MONTH_S;
+    values.push(seconds / WEEK_S);   seconds %= WEEK_S;
+    values.push(seconds / DAY_S);    seconds %= DAY_S;
+    values.push(seconds / HOUR_S);   seconds %= HOUR_S;
+    values.push(seconds / MINUTE_S); seconds %= MINUTE_S;
+
+    var pretty = "";
+    for(let i=0 ; i < values.length; i++) {
+      let val = Math.round(values[i]);
+      if(val <= 0) continue;
+
+      pretty += val + " " + lookup[i];
+        break;
+      }
+
+    return pretty;
+  },
+};
+
 let transitions;
 let pomodoro;
 let timer;
@@ -185,7 +218,7 @@ function enable() {
   transitions.add(Timer.Transitions.FOCUS, 7);
 
   timerCycle  = new Timer.Cycle(transitions);
-  pomodoro = new Pomodoro(timerCycle);
+  pomodoro    = new Pomodoro(timerCycle);
 }
 
 function disable() {
