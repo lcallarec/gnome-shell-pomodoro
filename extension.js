@@ -31,8 +31,8 @@ const Pomodoro = new Lang.Class({
       print("start");
     }));
 
-    this._timer.connect('ended', Lang.bind(this, function() {
-      this._notifySend("Cycle is ended", "Take a 5 minutes rest !", "emblem-important-symbolic");
+    this._timer.connect('nextTransitionStarted', Lang.bind(this, function(emitter, currentTransition) {
+      this._notifySend("Cycle is ended", HumanTransition.getSentence(currentTransition.transition, currentTransition.duration), "emblem-important-symbolic");
       print("ended in Pomodoro");
     }));
 
@@ -174,25 +174,35 @@ const Pomodoro = new Lang.Class({
 
 });
 
+const HumanTransition = {
 
-const HumanTime = {
+  getSentence: function(transition, seconds) {
+    let duration  = this.prettifyDuration(seconds);
+    let sentences = {
+      0 : "Enjoy the incomming " + duration + "Pomodoro working time !",
+      1 : duration + " Pomodoro short break !",
+      2 : duration + " Pomodoro long break !"
+    };
+    print(seconds);
+    return sentences[transition];
+  },
 
-  prettify: function(seconds) {
+  prettifyDuration: function(seconds) {
 
-    let MINUTE_S = 60;
-    let HOUR_S   = 60 * MINUTE_S;
-    let DAY_S    = 24 * HOUR_S;
-    let WEEK_S   = 7 * DAY_S;
-    let MONTH_S  = 30 * DAY_S;
+    let MINUTE_S  = 60;
+    let HOUR_S    = 60 * MINUTE_S;
+    let DAY_S     = 24 * HOUR_S;
+    let WEEK_S    = 7  * DAY_S;
+    let MONTH_S   = 30 * DAY_S;
 
     let lookup = ["months", "weeks", "days", "hours", "minutes"];
     let values = [];
 
-    values.push(seconds / MONTH_S);  seconds %= MONTH_S;
-    values.push(seconds / WEEK_S);   seconds %= WEEK_S;
-    values.push(seconds / DAY_S);    seconds %= DAY_S;
-    values.push(seconds / HOUR_S);   seconds %= HOUR_S;
-    values.push(seconds / MINUTE_S); seconds %= MINUTE_S;
+    values.push(seconds / MONTH_S);   seconds %= MONTH_S;
+    values.push(seconds / WEEK_S);    seconds %= WEEK_S;
+    values.push(seconds / DAY_S);     seconds %= DAY_S;
+    values.push(seconds / HOUR_S);    seconds %= HOUR_S;
+    values.push(seconds / MINUTE_S);  seconds %= MINUTE_S;
 
     var pretty = "";
     for(let i=0 ; i < values.length; i++) {

@@ -146,6 +146,7 @@ const Cycle = new Lang.Class({
       print("started in Cycle");
       this._timer.connect('ended', Lang.bind(this, () => {
         this._transitions.next();
+        this.emit('nextTransitionStarted', this._transitions.current);
       print("ended in Cycle");
         this._invokeTimer();
         this.start();
