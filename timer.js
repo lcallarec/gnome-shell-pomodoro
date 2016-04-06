@@ -103,12 +103,16 @@ const TransitionHandler = new Lang.Class({
     this._transitions.push({transition: transition, duration: duration});
   },
 
-  next: function() {
+  forward: function() {
     this._i++;
 
     if (this._i >= this._transitions.length) {
       this._i = 0;
     }
+  },
+
+  rewind: function() {
+	this._i = 0;
   },
 
   get current() {
@@ -122,10 +126,10 @@ const Cycle = new Lang.Class({
 
   _init: function(transitions) {
     this._transitions = transitions;
-    this._invokeTimer();
+    this._renewTimer();
   },
 
-  _invokeTimer: function() {
+  _renewTimer: function() {
     this._timer = new Timer(this._transitions.current.duration);
 
     this._timer.connect('increment', Lang.bind(this, () => {
@@ -145,10 +149,10 @@ const Cycle = new Lang.Class({
       this._timer.start();
       print("started in Cycle");
       this._timer.connect('ended', Lang.bind(this, () => {
-        this._transitions.next();
+        this._transitions.forward();
         this.emit('nextTransitionStarted', this._transitions.current);
-      print("ended in Cycle");
-        this._invokeTimer();
+        print("ended in Cycle");
+        this._renewTimer();
         this.start();
       }));
   },
@@ -166,6 +170,8 @@ const Cycle = new Lang.Class({
   },
 
   reset: function() {
+	this._transitions.rewind();
+    this._renewTimer();
     return this._timer.reset();
   },
 
