@@ -218,15 +218,30 @@ const HumanTransition = {
   },
 };
 
+
+let Settings = {
+    cycles: [
+		{type: Timer.Transitions.FOCUS, duration: 25 * 60},
+		{type: Timer.Transitions.SHORT_BREAK, duration: 5 * 60},
+		{type: Timer.Transitions.FOCUS, duration: 25 * 60},
+		{type: Timer.Transitions.SHORT_BREAK, duration: 5 * 60},
+		{type: Timer.Transitions.FOCUS, duration: 25 * 60},
+		{type: Timer.Transitions.SHORT_BREAK, duration: 5 * 60},
+		{type: Timer.Transitions.FOCUS, duration: 25 * 60},
+		{type: Timer.Transitions.SHORT_BREAK, duration: 10 * 60},
+	]	
+}; 
+
 let transitions;
 let pomodoro;
+let timerCycle;
 let timer;
 
 function enable() {
   transitions = new Timer.TransitionHandler();
-  transitions.add(Timer.Transitions.FOCUS, 10);
-  transitions.add(Timer.Transitions.SHORT_BREAK, 5);
-  transitions.add(Timer.Transitions.FOCUS, 7);
+  for (let cycle of Settings.cycles) {
+    transitions.add(cycle.type, cycle.duration);	  
+  }
 
   timerCycle  = new Timer.Cycle(transitions);
   pomodoro    = new Pomodoro(timerCycle);
