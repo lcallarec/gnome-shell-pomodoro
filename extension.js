@@ -167,7 +167,7 @@ const Pomodoro = new Lang.Class({
     Main.messageTray.add(source);
 
     let notification = new MessageTray.Notification(source, summary, body);
-    notification.setResident(true);
+    notification.setTransient(true);
 
     source.notify(notification);
   },
