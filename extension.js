@@ -179,7 +179,7 @@ const HumanTransition = {
   getSentence: function(transition, seconds) {
     let duration  = this.prettifyDuration(seconds);
     let sentences = {
-      0 : "Enjoy the incomming " + duration + "Pomodoro working time !",
+      0 : "Enjoy the incomming " + duration + " Pomodoro working time !",
       1 : duration + " Pomodoro short break !",
       2 : duration + " Pomodoro long break !"
     };
@@ -195,7 +195,7 @@ const HumanTransition = {
     let WEEK_S    = 7  * DAY_S;
     let MONTH_S   = 30 * DAY_S;
 
-    let lookup = ["months", "weeks", "days", "hours", "minutes"];
+    let lookup = ["months", "weeks", "days", "hours", "minutes", "seconds"];
     let values = [];
 
     values.push(seconds / MONTH_S);   seconds %= MONTH_S;
@@ -203,6 +203,7 @@ const HumanTransition = {
     values.push(seconds / DAY_S);     seconds %= DAY_S;
     values.push(seconds / HOUR_S);    seconds %= HOUR_S;
     values.push(seconds / MINUTE_S);  seconds %= MINUTE_S;
+    values.push(seconds);             seconds %= 1;
 
     var pretty = "";
     for(let i=0 ; i < values.length; i++) {
