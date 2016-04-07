@@ -2,6 +2,7 @@ const GLib = imports.gi.GLib;
 const St   = imports.gi.St;
 const Main = imports.ui.main;
 const Lang = imports.lang;
+const Gst  = imports.gi.Gst;
 const Signals   = imports.signals;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
@@ -9,8 +10,8 @@ const Clutter   = imports.gi.Clutter;
 const MessageTray = imports.ui.messageTray;
 
 const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const Timer = Me.imports.timer;
+const Me             = ExtensionUtils.getCurrentExtension();
+const Timer          = Me.imports.timer;
 
 const Pomodoro = new Lang.Class({
   Name: 'Pomodoro',
@@ -33,7 +34,7 @@ const Pomodoro = new Lang.Class({
 
     this._timer.connect('nextTransitionStarted', Lang.bind(this, function(emitter, currentTransition) {
       this._notifySend("Cycle is ended", HumanTransition.getSentence(currentTransition.transition, currentTransition.duration), "emblem-important-symbolic");
-      print("ended in Pomodoro");
+      this._bell();
     }));
 
     let hbox = new St.BoxLayout({
@@ -171,6 +172,28 @@ const Pomodoro = new Lang.Class({
 
     source.notify(notification);
   },
+  
+  _bell: function() {
+    if (typeof this.player == 'undefined') {
+        Gst.init(null, 0);
+        this.player  = Gst.ElementFactory.make("playbin", "player");
+        this.playBus = this.player.get_bus();
+        this.playBus.add_signal_watch();
+        this.playBus.connect("message", Lang.bind(this,
+        function(playBus, message) {
+            if (message != null) {
+                // IMPORTANT: to reuse the player, set state to READY
+                let t = message.type;
+                if ( t == Gst.MessageType.EOS || t == Gst.MessageType.ERROR) {
+                    this.player.set_state(Gst.State.READY);
+                }
+            }
+        }));
+    } // if undefined
+    this.player.set_property('uri', Settings.soundFile);
+    this.player.set_state(Gst.State.PLAYING);
+}
+
 
 });
 
@@ -218,7 +241,6 @@ const HumanTransition = {
   },
 };
 
-
 let Settings = {
     cycles: [
 		{type: Timer.Transitions.FOCUS, duration: 25 * 60},
@@ -229,7 +251,8 @@ let Settings = {
 		{type: Timer.Transitions.SHORT_BREAK, duration: 5 * 60},
 		{type: Timer.Transitions.FOCUS, duration: 25 * 60},
 		{type: Timer.Transitions.SHORT_BREAK, duration: 10 * 60},
-	]	
+	],
+	soundFile: 'file:///usr/share/sounds/freedesktop/stereo/complete.oga'
 }; 
 
 let transitions;
