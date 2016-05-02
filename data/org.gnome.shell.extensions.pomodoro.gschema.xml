@@ -1,0 +1,7 @@
+<schemalist gettext-domain="gnome-shell-extension-openweather">
+  <schema id="org.gnome.shell.extensions.pomodoro" path="/org/gnome/shell/extensions/pomodoro/">
+        <key name="sound-endcycle" type="s">
+          <default>"file:///usr/share/sounds/freedesktop/stereo/complete.oga"</default>
+        </key>
+  </schema>
+</schemalist>
