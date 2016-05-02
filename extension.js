@@ -11,6 +11,7 @@ const MessageTray = imports.ui.messageTray;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me             = ExtensionUtils.getCurrentExtension();
+const Convenience    = Me.imports.convenience;
 const Timer          = Me.imports.timer;
 
 const Pomodoro = new Lang.Class({
@@ -172,7 +173,7 @@ const Pomodoro = new Lang.Class({
 
     source.notify(notification);
   },
-  
+
   _bell: function() {
     if (typeof this.player == 'undefined') {
         Gst.init(null, 0);
@@ -241,6 +242,9 @@ const HumanTransition = {
   },
 };
 
+
+let _settings = Convenience.getSettings('org.gnome.shell.extensions.pomodoro');
+
 let Settings = {
     cycles: [
 		{type: Timer.Transitions.FOCUS, duration: 25 * 60},
@@ -252,8 +256,8 @@ let Settings = {
 		{type: Timer.Transitions.FOCUS, duration: 25 * 60},
 		{type: Timer.Transitions.SHORT_BREAK, duration: 10 * 60},
 	],
-	soundFile: 'file:///usr/share/sounds/freedesktop/stereo/complete.oga'
-}; 
+	soundFile: _settings.get_string('sound-endcycle')
+};
 
 let transitions;
 let pomodoro;
@@ -261,9 +265,10 @@ let timerCycle;
 let timer;
 
 function enable() {
+
   transitions = new Timer.TransitionHandler();
   for (let cycle of Settings.cycles) {
-    transitions.add(cycle.type, cycle.duration);	  
+    transitions.add(cycle.type, cycle.duration);
   }
 
   timerCycle  = new Timer.Cycle(transitions);
