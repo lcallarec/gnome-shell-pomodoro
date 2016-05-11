@@ -8,6 +8,7 @@ EXTPATH=~/.local/share/gnome-shell/extensions/$(EXTNAME)
 all: $(EXEC)
 
 compile:
+	mkdir -p schemas
 	glib-compile-schemas data/ --targetdir=schemas
 
 install:
@@ -19,4 +20,4 @@ enable:
 	gnome-shell-extension-tool -e pomodoro@l.callarec.gmail.com
 
 disable:
-		gnome-shell-extension-tool -d pomodoro@l.callarec.gmail.com
+	gnome-shell-extension-tool -d pomodoro@l.callarec.gmail.com
