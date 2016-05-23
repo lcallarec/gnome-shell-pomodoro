@@ -5,15 +5,19 @@
 
 ## Install instructions
 
-Clone the project :
-
 ```bash
-mkdir -p ~/.local/share/gnome-shell/extensions/pomodoro@l.callarec.gmail.com && cd ~/.local/share/gnome-shell/extensions/pomodoro@l.callarec.gmail.com
-git clone git@github.com:lcallarec/gnome-shell-pomodoro.git .
-gnome-shell-extension-tool -e pomodoro@l.callarec.gmail.com
+#Clone the project
+git clone https://github.com/lcallarec/gnome-shell-pomodoro.git
+
+cd gnome-shell-pomodoro
+
+#Build and Install
+make && make install
+
+#Enable the extension
+make enable
 ```
 
+
+
 Then restart gnome-schell by typing `Alt+F2`/`r`
-
-
-
