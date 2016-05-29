@@ -1,5 +1,6 @@
 const GLib = imports.gi.GLib;
 const St   = imports.gi.St;
+const Gio  = imports.gi.Gio;
 const Main = imports.ui.main;
 const Lang = imports.lang;
 const Gst  = imports.gi.Gst;
@@ -14,6 +15,13 @@ const Me             = ExtensionUtils.getCurrentExtension();
 const Convenience    = Me.imports.convenience;
 const Timer          = Me.imports.timer;
 
+/**
+* Gnome shell extension adding Pomodoro timer feature to the shell.
+*
+* Thanks for the tomatoes !
+*
+* @author Laurent Callarec l.callarec@gmail.com
+*/
 const Pomodoro = new Lang.Class({
   Name: 'Pomodoro',
   Extends: PanelMenu.Button,
@@ -47,8 +55,9 @@ const Pomodoro = new Lang.Class({
       y_align: Clutter.ActorAlign.CENTER
     });
 
-    this._icon  = new St.Icon({
-      style_class: 'pomodoro-status-icon'
+    this._icon = new St.Icon({
+      gicon: Gio.icon_new_for_string(Me.path + "/assets/pomodoro.svg"),
+      icon_size: 12
     });
 
     hbox.add_actor(this._label);

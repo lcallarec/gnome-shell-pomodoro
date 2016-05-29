@@ -1,10 +1,3 @@
-.pomodoro-status-icon {
-    background-image: url("assets/pomodoro.svg");
-    background-size: 12px;
-    height: 12px;
-    width: 12px;
-}
-
 .pomodoro-button {
     border-radius: 32px;
     padding: 14px;
@@ -25,7 +18,7 @@
     padding:6px;
 }
 
-.pomodoro-button-box{
-padding: 0px;
-spacing: 12px;
+.pomodoro-button-box {
+    padding: 0px;
+    spacing: 12px;
 }
