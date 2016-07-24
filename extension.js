@@ -56,7 +56,7 @@ const Pomodoro = new Lang.Class({
     });
 
     this._icon = new St.Icon({
-      gicon: Gio.icon_new_for_string(Me.path + "/assets/pomodoro.svg"),
+      gicon: Gio.icon_new_for_string(Me.path + "/assets/pomodoro-symbolic.svg"),
       icon_size: 12
     });
 
@@ -96,6 +96,13 @@ const Pomodoro = new Lang.Class({
 
   getPlayPauseIconName: function() {
     return this._timer.isStarted() ? "media-playback-pause-symbolic" : "media-playback-start-symbolic";
+  },
+
+  destroy: function() {
+
+
+
+    this.parent.destroy();
   },
 
   _createPlayPauseShellButton: function() {
