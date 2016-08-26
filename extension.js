@@ -270,7 +270,7 @@ let Settings = {
 		{type: Timer.Transitions.FOCUS, duration: 25 * 60},
 		{type: Timer.Transitions.SHORT_BREAK, duration: 5 * 60},
 		{type: Timer.Transitions.FOCUS, duration: 25 * 60},
-		{type: Timer.Transitions.SHORT_BREAK, duration: 10 * 60},
+		{type: Timer.Transitions.LONG_BREAK, duration: 10 * 60},
 	],
 	soundFile: _settings.get_string('sound-endcycle')
 };
