@@ -3,5 +3,14 @@
         <key name="sound-endcycle" type="s">
           <default>"file:///usr/share/sounds/freedesktop/stereo/complete.oga"</default>
         </key>
+		<key name="focus-duration" type="i">
+			<default>1500</default>
+        </key>        
+        <key name="short-break-duration" type="i">
+			<default>300</default>
+        </key>
+		<key name="long-break-duration" type="i">
+			<default>600</default>
+        </key>
   </schema>
 </schemalist>

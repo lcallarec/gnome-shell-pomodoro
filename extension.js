@@ -263,14 +263,14 @@ let _settings = Convenience.getSettings('org.gnome.shell.extensions.pomodoro');
 
 let Settings = {
     cycles: [
-		{type: Timer.Transitions.FOCUS, duration: 25 * 60},
-		{type: Timer.Transitions.SHORT_BREAK, duration: 5 * 60},
-		{type: Timer.Transitions.FOCUS, duration: 25 * 60},
-		{type: Timer.Transitions.SHORT_BREAK, duration: 5 * 60},
-		{type: Timer.Transitions.FOCUS, duration: 25 * 60},
-		{type: Timer.Transitions.SHORT_BREAK, duration: 5 * 60},
-		{type: Timer.Transitions.FOCUS, duration: 25 * 60},
-		{type: Timer.Transitions.LONG_BREAK, duration: 10 * 60},
+		{type: Timer.Transitions.FOCUS, duration: _settings.get_int('focus-duration')},
+		{type: Timer.Transitions.SHORT_BREAK, duration: _settings.get_int('short-break-duration')},
+		{type: Timer.Transitions.FOCUS, duration: _settings.get_int('focus-duration')},
+		{type: Timer.Transitions.SHORT_BREAK, duration: _settings.get_int('short-break-duration')},
+		{type: Timer.Transitions.FOCUS, duration: _settings.get_int('focus-duration')},
+		{type: Timer.Transitions.SHORT_BREAK, duration: _settings.get_int('short-break-duration')},
+		{type: Timer.Transitions.FOCUS, duration: _settings.get_int('focus-duration')},
+		{type: Timer.Transitions.LONG_BREAK, duration: _settings.get_int('long-break-duration')},
 	],
 	soundFile: _settings.get_string('sound-endcycle')
 };
