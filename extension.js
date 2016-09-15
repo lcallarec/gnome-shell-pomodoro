@@ -8,6 +8,7 @@ const Signals   = imports.signals;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const Clutter   = imports.gi.Clutter;
+const Util      = imports.misc.util;
 const MessageTray = imports.ui.messageTray;
 
 const ExtensionUtils = imports.misc.extensionUtils;
@@ -83,23 +84,25 @@ const Pomodoro = new Lang.Class({
 
     this.menu.removeAll();
 
-    this._menuActionRow = new PopupMenu.PopupBaseMenuItem({
+    this._menuActionRowTop = new PopupMenu.PopupBaseMenuItem({
       reactive: false
     });
 
-    this._menuActionRowBox = new St.BoxLayout({
+    this._menuActionRowBoxTop = new St.BoxLayout({
       style_class: 'pomodoro-button-box'
     });
 
     this._playPauseButton = this._createPlayPauseShellButton();
     this._resetButton     = this._createResetShellButton();
 
-    this._menuActionRowBox.add_actor(this._playPauseButton);
-    this._menuActionRowBox.add_actor(this._resetButton);
+    this._menuActionRowBoxTop.add(this._playPauseButton);
+    this._menuActionRowBoxTop.add(this._resetButton);
 
-    this._menuActionRow.actor.add_actor(this._menuActionRowBox);
+    this._menuActionRowTop.actor.add_actor(this._menuActionRowBoxTop);
 
-    this.menu.addMenuItem(this._menuActionRow);
+    this.menu.addMenuItem(this._menuActionRowTop);
+    this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+    this.menu.addMenuItem(this._createPrefsPopupMenuItem());
   },
 
   getPlayPauseIconName: function() {
@@ -137,6 +140,7 @@ const Pomodoro = new Lang.Class({
   },
 
   _createResetShellButton: function() {
+
     let button = this._createShellButton(
       "view-refresh-symbolic",
       "reset timer"
@@ -154,19 +158,35 @@ const Pomodoro = new Lang.Class({
     return button;
   },
 
+  _createPrefsPopupMenuItem: function() {
+
+      let menu = new PopupMenu.PopupMenuItem("Open settings...");
+
+      menu.connect('activate', Lang.bind(this, () => {
+        Util.spawn(["gnome-shell-extension-prefs", Me.metadata.uuid]);
+      }));
+
+      return menu;
+  },
+
   _createShellButton: function(iconName, accessibleName) {
 
-      let button = new St.Button({
+      const config = {
           reactive: true,
           can_focus: true,
           track_hover: true,
           accessible_name: accessibleName,
-          style_class: 'system-menu-action'
-      });
+          style_class: 'system-menu-action',
+          label: accessibleName
+      };
 
-      button.child = new St.Icon({
-          icon_name: iconName
-      });
+      let button = new St.Button(config);
+
+      if (iconName) {
+        button.child = new St.Icon({
+            icon_name: iconName
+        });
+      }
 
       return button;
     },
