@@ -26,25 +26,10 @@ const Pomodoro = new Lang.Class({
   Name: 'Pomodoro',
   Extends: PanelMenu.Button,
 
-  _init: function(timer) {
+  _init: function() {
     PanelMenu.Button.prototype._init.call(this, 0.0);
 
-    this._timer = timer;
-
-    this._timer.connect('increment', Lang.bind(this, function() {
-      this._label.set_text(this._timer.time);
-      print("increment");
-    }));
-
-    this._timer.connect('start', Lang.bind(this, function() {
-      this._label.set_text(this._timer.time);
-      print("start");
-    }));
-
-    this._timer.connect('nextTransitionStarted', Lang.bind(this, function(emitter, currentTransition) {
-      this._notifySend("Cycle is ended", HumanTransition.getSentence(currentTransition.transition, currentTransition.duration), "emblem-important-symbolic");
-      this._bell();
-    }));
+    this._initTimer();
 
     let hbox = new St.BoxLayout({
       style_class: 'panel-status-menu-box'}
@@ -69,6 +54,29 @@ const Pomodoro = new Lang.Class({
     Main.panel.addToStatusArea('Pomodoro', this);
 
     this._buildPopupMenu();
+  },
+
+  _initTimer: function() {
+
+    if (this._timer != undefined) {
+      this._timer.stop();
+    }
+
+    this._settings = this._getApplicationSettings();
+    this._timer = this._getTimerFromSettings(this._settings);
+
+    this._timer.connect('increment', Lang.bind(this, function() {
+      this._label.set_text(this._timer.time);
+    }));
+
+    this._timer.connect('start', Lang.bind(this, function() {
+      this._label.set_text(this._timer.time);
+    }));
+
+    this._timer.connect('nextTransitionStarted', Lang.bind(this, function(emitter, currentTransition) {
+      this._notifySend("Cycle is ended", HumanTransition.getSentence(currentTransition.transition, currentTransition.duration), "emblem-important-symbolic");
+      this._bell();
+    }));
   },
 
   _buildPopupMenu: function() {
@@ -99,9 +107,6 @@ const Pomodoro = new Lang.Class({
   },
 
   destroy: function() {
-
-
-
     this.parent.destroy();
   },
 
@@ -138,9 +143,12 @@ const Pomodoro = new Lang.Class({
     );
 
     button.connect('clicked', Lang.bind(this, () => {
-      this._timer.reset();
+
+      this._initTimer();
+
       this._label.set_text(this._timer.time);
       this._setPlayPauseShellButtonIcon();
+
     }));
 
     return button;
@@ -164,17 +172,8 @@ const Pomodoro = new Lang.Class({
     },
 
   _setPlayPauseShellButtonIcon: function() {
-
-    let iconName;
-
-    if (this._timer.isStarted()) {
-      iconName = "media-playback-pause-symbolic"
-    } else {
-      iconName = "media-playback-start-symbolic"
-    }
-
     this._playPauseButton.child = new St.Icon({
-        icon_name: iconName
+        icon_name: this.getPlayPauseIconName()
     });
   },
 
@@ -207,11 +206,39 @@ const Pomodoro = new Lang.Class({
             }
         }));
     } // if undefined
-    this.player.set_property('uri', Settings.soundFile);
+    this.player.set_property('uri', this._settings.soundFile);
     this.player.set_state(Gst.State.PLAYING);
-}
+  },
 
+  _getApplicationSettings: function() {
 
+    let _gsettings = Convenience.getSettings('org.gnome.shell.extensions.pomodoro');
+
+    var settings = {
+        cycles: [
+      		{type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
+      		{type: Timer.Transitions.SHORT_BREAK, duration: _gsettings.get_int('short-break-duration')},
+      		{type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
+      		{type: Timer.Transitions.SHORT_BREAK, duration: _gsettings.get_int('short-break-duration')},
+      		{type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
+      		{type: Timer.Transitions.SHORT_BREAK, duration: _gsettings.get_int('short-break-duration')},
+      		{type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
+      		{type: Timer.Transitions.LONG_BREAK, duration: _gsettings.get_int('long-break-duration')},
+    	],
+    	soundFile: _gsettings.get_string('sound-endcycle')
+    };
+
+    return settings;
+  },
+
+  _getTimerFromSettings: function(settings) {
+    let transitions = new Timer.TransitionHandler();
+    for (let cycle of settings.cycles) {
+      transitions.add(cycle.type, cycle.duration);
+    }
+
+    return new Timer.Cycle(transitions);
+  }
 });
 
 const HumanTransition = {
@@ -223,7 +250,7 @@ const HumanTransition = {
       1 : duration + " Pomodoro short break !",
       2 : duration + " Pomodoro long break !"
     };
-    print(seconds);
+
     return sentences[transition];
   },
 
@@ -258,40 +285,12 @@ const HumanTransition = {
   },
 };
 
-
-let _settings = Convenience.getSettings('org.gnome.shell.extensions.pomodoro');
-
-let Settings = {
-    cycles: [
-		{type: Timer.Transitions.FOCUS, duration: _settings.get_int('focus-duration')},
-		{type: Timer.Transitions.SHORT_BREAK, duration: _settings.get_int('short-break-duration')},
-		{type: Timer.Transitions.FOCUS, duration: _settings.get_int('focus-duration')},
-		{type: Timer.Transitions.SHORT_BREAK, duration: _settings.get_int('short-break-duration')},
-		{type: Timer.Transitions.FOCUS, duration: _settings.get_int('focus-duration')},
-		{type: Timer.Transitions.SHORT_BREAK, duration: _settings.get_int('short-break-duration')},
-		{type: Timer.Transitions.FOCUS, duration: _settings.get_int('focus-duration')},
-		{type: Timer.Transitions.LONG_BREAK, duration: _settings.get_int('long-break-duration')},
-	],
-	soundFile: _settings.get_string('sound-endcycle')
-};
-
-let transitions;
 let pomodoro;
-let timerCycle;
-let timer;
 
 function enable() {
-
-  transitions = new Timer.TransitionHandler();
-  for (let cycle of Settings.cycles) {
-    transitions.add(cycle.type, cycle.duration);
-  }
-
-  timerCycle  = new Timer.Cycle(transitions);
-  pomodoro    = new Pomodoro(timerCycle);
+  pomodoro = new Pomodoro();
 }
 
 function disable() {
-  timer.stop();
   pomodoro.destroy();
 }

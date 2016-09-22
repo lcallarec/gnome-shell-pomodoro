@@ -1,3 +1,11 @@
+/**
+* timers.js
+*
+* Thanks for the tomatoes !
+*
+* @author Laurent Callarec l.callarec@gmail.com
+*/
+
 const Lang    = imports.lang;
 const Signals = imports.signals;
 const GLib    = imports.gi.GLib;
@@ -17,14 +25,20 @@ const Timer = new Lang.Class({
     this.emit('start');
     this._isPaused = false;
     this._timerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, Lang.bind(this, () => {
+
       this._elapsed++;
       this.emit('increment');
+
       if (this.remaining == -1) {
+
         this.stop();
         this.emit('ended');
+
         return false;
       }
+
       return true;
+
     }));
   },
 
@@ -81,6 +95,10 @@ const Timer = new Lang.Class({
     minutes = minutes < 0 ? "0" : minutes;
 
     return minutes + ':' + seconds;
+  },
+
+  destroy: function() {
+    this.stop();
   }
 
 });
@@ -115,6 +133,11 @@ const TransitionHandler = new Lang.Class({
 	this._i = 0;
   },
 
+  flush: function() {
+    this.rewind();
+    this._transitions = [];
+  },
+
   get current() {
     return this._transitions[this._i];
   }
@@ -127,6 +150,9 @@ const Cycle = new Lang.Class({
   _init: function(transitions) {
     this._transitions = transitions;
     this._renewTimer();
+
+    this.guid = this._guid();
+
   },
 
   _renewTimer: function() {
@@ -146,15 +172,18 @@ const Cycle = new Lang.Class({
   },
 
   start: function() {
+
       this._timer.start();
-      print("started in Cycle");
+
       this._timer.connect('ended', Lang.bind(this, () => {
+
         this._transitions.forward();
         this.emit('nextTransitionStarted', this._transitions.current);
-        print("ended in Cycle");
         this._renewTimer();
         this.start();
+
       }));
+
   },
 
   stop: function() {
@@ -201,7 +230,12 @@ const Cycle = new Lang.Class({
 
   get timer() {
     return this._timer;
+  },
+
+  destroy: function() {
+    this.timer.destroy();
   }
+
 });
 
 Signals.addSignalMethods(Cycle.prototype);
