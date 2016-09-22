@@ -9,6 +9,9 @@
 const Lang    = imports.lang;
 const Signals = imports.signals;
 const GLib    = imports.gi.GLib;
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me             = ExtensionUtils.getCurrentExtension();
+const MyUtils = Me.imports.utils;
 
 const Timer = new Lang.Class({
   Name: 'Timer',
@@ -130,7 +133,7 @@ const TransitionHandler = new Lang.Class({
   },
 
   rewind: function() {
-	this._i = 0;
+	  this._i = 0;
   },
 
   flush: function() {
@@ -151,7 +154,7 @@ const Cycle = new Lang.Class({
     this._transitions = transitions;
     this._renewTimer();
 
-    this.guid = this._guid();
+    this.guid = MyUtils.Guid.create();
 
   },
 
