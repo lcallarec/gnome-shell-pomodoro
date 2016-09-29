@@ -236,16 +236,16 @@ const Pomodoro = new Lang.Class({
 
     var settings = {
         cycles: [
-      		{type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
-      		{type: Timer.Transitions.SHORT_BREAK, duration: _gsettings.get_int('short-break-duration')},
-      		{type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
-      		{type: Timer.Transitions.SHORT_BREAK, duration: _gsettings.get_int('short-break-duration')},
-      		{type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
-      		{type: Timer.Transitions.SHORT_BREAK, duration: _gsettings.get_int('short-break-duration')},
-      		{type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
-      		{type: Timer.Transitions.LONG_BREAK, duration: _gsettings.get_int('long-break-duration')},
-    	],
-    	soundFile: _gsettings.get_string('sound-endcycle')
+          {type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
+          {type: Timer.Transitions.SHORT_BREAK, duration: _gsettings.get_int('short-break-duration')},
+          {type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
+          {type: Timer.Transitions.SHORT_BREAK, duration: _gsettings.get_int('short-break-duration')},
+          {type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
+          {type: Timer.Transitions.SHORT_BREAK, duration: _gsettings.get_int('short-break-duration')},
+          {type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
+          {type: Timer.Transitions.LONG_BREAK, duration: _gsettings.get_int('long-break-duration')},
+        ],
+        soundFile: _gsettings.get_string('sound-endcycle')
     };
 
     return settings;
