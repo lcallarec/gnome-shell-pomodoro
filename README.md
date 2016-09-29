@@ -18,6 +18,4 @@ make && make install
 make enable
 ```
 
-
-
 Then restart gnome-schell by typing `Alt+F2`/`r`
