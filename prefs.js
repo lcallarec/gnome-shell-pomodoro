@@ -15,7 +15,7 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me             = ExtensionUtils.getCurrentExtension();
 const Convenience    = Me.imports.convenience;
 
-init = function() {
+function init() {
   return null;
 }
 
@@ -28,7 +28,7 @@ const Settings = {
   }
 }
 
-buildPrefsWidget = function() {
+function buildPrefsWidget() {
 
   let frame = new Gtk.Box({orientation: Gtk.Orientation.VERTICAL, border_width: 10});
 

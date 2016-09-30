@@ -12,7 +12,7 @@ const ExtensionUtils = imports.misc.extensionUtils;
  * in extensionsdir/schemas. If @schema is not provided, it is taken from
  * metadata['settings-schema'].
  */
-getSettings = function(schema) {
+function getSettings(schema) {
     let extension = ExtensionUtils.getCurrentExtension();
 
     schema = schema || extension.metadata['settings-schema'];

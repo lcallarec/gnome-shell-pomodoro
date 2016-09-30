@@ -308,10 +308,10 @@ const HumanTransition = {
 
 let pomodoro;
 
-enable = function() {
+function enable() {
   pomodoro = new Pomodoro();
 }
 
-disable = function() {
+function disable() {
   pomodoro.destroy();
 }
