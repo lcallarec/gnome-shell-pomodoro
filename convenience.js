@@ -1,3 +1,6 @@
+/* eslint no-unused-vars: ["error", { "vars": "local" }] */
+/* global getSettings:true */
+
 const Gio = imports.gi.Gio;
 const ExtensionUtils = imports.misc.extensionUtils;
 
@@ -9,7 +12,7 @@ const ExtensionUtils = imports.misc.extensionUtils;
  * in extensionsdir/schemas. If @schema is not provided, it is taken from
  * metadata['settings-schema'].
  */
-function getSettings(schema) {
+getSettings = function(schema) {
     let extension = ExtensionUtils.getCurrentExtension();
 
     schema = schema || extension.metadata['settings-schema'];
