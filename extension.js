@@ -1,3 +1,6 @@
+/* eslint no-unused-vars: ["error", { "vars": "local" }] */
+/* global enable:true, disable: true */
+
 const St   = imports.gi.St;
 const Gio  = imports.gi.Gio;
 const Main = imports.ui.main;
@@ -305,10 +308,10 @@ const HumanTransition = {
 
 let pomodoro;
 
-function enable() {
+enable = function() {
   pomodoro = new Pomodoro();
 }
 
-function disable() {
+disable = function() {
   pomodoro.destroy();
 }
