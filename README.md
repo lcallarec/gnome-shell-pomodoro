@@ -5,6 +5,15 @@
 * Tested on gnome-shell 3.16 and 3.18.
 * Not proposed as official gnome-shell extension yet : it's not completly finished
 
+## Features
+
+![Shell integration](docs/screenshots/shell.png)
+![Settings](docs/screenshots/prefs.png)
+
+* Start, pause & restart the timer. Keep it simple !
+* Bells and tray messages
+* Configure cycle times
+
 ## Install instructions
 
 ```bash
