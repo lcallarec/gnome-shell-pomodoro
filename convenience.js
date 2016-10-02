@@ -1,3 +1,6 @@
+/* eslint no-unused-vars: ["error", { "vars": "local" }] */
+/* global getSettings:true */
+
 const Gio = imports.gi.Gio;
 const ExtensionUtils = imports.misc.extensionUtils;
 

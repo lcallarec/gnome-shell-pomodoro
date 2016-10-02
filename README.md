@@ -1,4 +1,6 @@
-# Gnome-Shell Pomodoro  extension
+# Gnome-Shell Pomodoro extension
+
+[![Build Status](https://travis-ci.org/lcallarec/gnome-shell-pomodoro.svg?branch=master)](https://travis-ci.org/lcallarec/gnome-shell-pomodoro)
 
 * Tested on gnome-shell 3.16 and 3.18.
 * Not proposed as official gnome-shell extension yet : it's not completly finished
@@ -9,15 +11,12 @@
 #Clone the project
 git clone https://github.com/lcallarec/gnome-shell-pomodoro.git
 
-cd gnome-shell-pomodoro
-
 #Build and Install
-make && make install
+cd gnome-shell-pomodoro
+make && make install #Install in ~/.local/share
 
-#Enable the extension
+#Enable the extension programmatically
 make enable
 ```
 
-
-
-Then restart gnome-schell by typing `Alt+F2`/`r`
+Then restart gnome-shell by typing `Alt+F2` and `r` in the prompt

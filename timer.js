@@ -1,3 +1,5 @@
+/* exported Transitions, TransitionHandler */
+
 /**
 * timers.js
 *
@@ -133,7 +135,7 @@ const TransitionHandler = new Lang.Class({
   },
 
   rewind: function() {
-	  this._i = 0;
+    this._i = 0;
   },
 
   flush: function() {

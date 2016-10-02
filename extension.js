@@ -1,10 +1,11 @@
-const GLib = imports.gi.GLib;
+/* eslint no-unused-vars: ["error", { "vars": "local" }] */
+/* global enable:true, disable: true */
+
 const St   = imports.gi.St;
 const Gio  = imports.gi.Gio;
 const Main = imports.ui.main;
 const Lang = imports.lang;
 const Gst  = imports.gi.Gst;
-const Signals   = imports.signals;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const Clutter   = imports.gi.Clutter;
@@ -236,16 +237,16 @@ const Pomodoro = new Lang.Class({
 
     var settings = {
         cycles: [
-      		{type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
-      		{type: Timer.Transitions.SHORT_BREAK, duration: _gsettings.get_int('short-break-duration')},
-      		{type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
-      		{type: Timer.Transitions.SHORT_BREAK, duration: _gsettings.get_int('short-break-duration')},
-      		{type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
-      		{type: Timer.Transitions.SHORT_BREAK, duration: _gsettings.get_int('short-break-duration')},
-      		{type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
-      		{type: Timer.Transitions.LONG_BREAK, duration: _gsettings.get_int('long-break-duration')},
-    	],
-    	soundFile: _gsettings.get_string('sound-endcycle')
+          {type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
+          {type: Timer.Transitions.SHORT_BREAK, duration: _gsettings.get_int('short-break-duration')},
+          {type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
+          {type: Timer.Transitions.SHORT_BREAK, duration: _gsettings.get_int('short-break-duration')},
+          {type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
+          {type: Timer.Transitions.SHORT_BREAK, duration: _gsettings.get_int('short-break-duration')},
+          {type: Timer.Transitions.FOCUS, duration: _gsettings.get_int('focus-duration')},
+          {type: Timer.Transitions.LONG_BREAK, duration: _gsettings.get_int('long-break-duration')},
+        ],
+        soundFile: _gsettings.get_string('sound-endcycle')
     };
 
     return settings;
