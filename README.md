@@ -8,6 +8,7 @@
 ## Features
 
 ![Shell integration](docs/screenshots/shell.png)
+
 ![Settings](docs/screenshots/prefs.png)
 
 * Start, pause & restart the timer. Keep it simple !
