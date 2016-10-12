@@ -45,7 +45,12 @@ function buildPrefsWidget() {
     Settings.set("focus-duration", focusSpin.value)
   }));
 
-  grid.attach(new Gtk.Label({label: "Focus duration (minutes)"}), 0, 0, 1, 1)
+  let fdLabel = new Gtk.Label({label: "Focus duration (minutes)"});
+  fdLabel.set_hexpand(true);
+  fdLabel.set_halign(Gtk.Align.END);
+
+
+  grid.attach(fdLabel, 0, 0, 1, 1)
   grid.attach(focusSpin, 1, 0, 1, 1);
 
   grid.attach(new Gtk.Separator({orientation: Gtk.Orientation.HORIZONTAL}), 0, 1, 2, 1);
@@ -56,7 +61,11 @@ function buildPrefsWidget() {
     Settings.set("short-break-duration", shortBreakSpin.value)
   }));
 
-  grid.attach(new Gtk.Label({label: "Short break duration (minutes)"}), 0, 2, 1, 1)
+  let sdLabel = new Gtk.Label({label: "Short break duration (minutes)"});
+  sdLabel.set_hexpand(true);
+  sdLabel.set_halign(Gtk.Align.END);
+
+  grid.attach(sdLabel, 0, 2, 1, 1)
   grid.attach(shortBreakSpin, 1, 2, 1, 1);
 
   let longBreakSpin  = Gtk.SpinButton.new_with_range(0, 60, 1);
@@ -65,7 +74,11 @@ function buildPrefsWidget() {
     Settings.set("long-break-duration", longBreakSpin.value)
   }));
 
-  grid.attach(new Gtk.Label({label: "Long break duration (minutes)"}), 0, 3, 1, 1);
+  ldLabel = new Gtk.Label({label: "Long break duration (minutes)"});
+  ldLabel.set_hexpand(true);
+  ldLabel.set_halign(Gtk.Align.END);
+
+  grid.attach(ldLabel, 0, 3, 1, 1);
   grid.attach(longBreakSpin, 1, 3, 1, 1);
 
   frame.show_all();
