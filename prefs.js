@@ -74,7 +74,7 @@ function buildPrefsWidget() {
     Settings.set("long-break-duration", longBreakSpin.value)
   }));
 
-  ldLabel = new Gtk.Label({label: "Long break duration (minutes)"});
+  let ldLabel = new Gtk.Label({label: "Long break duration (minutes)"});
   ldLabel.set_hexpand(true);
   ldLabel.set_halign(Gtk.Align.END);
 
