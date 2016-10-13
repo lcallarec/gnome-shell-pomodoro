@@ -194,7 +194,7 @@ const Pomodoro = new Lang.Class({
 
   _setPlayPauseShellButtonIcon: function() {
     this._playPauseButton.child = new St.Icon({
-        icon_name: this.getPlayPauseIconName()
+      icon_name: this.getPlayPauseIconName()
     });
   },
 
@@ -204,7 +204,10 @@ const Pomodoro = new Lang.Class({
 
     Main.messageTray.add(source);
 
-    let notification = new MessageTray.Notification(source, summary, body);
+    let notification = new MessageTray.Notification(source, summary, body, {
+      gicon: Gio.icon_new_for_string(Me.path + "/assets/pomodoro-symbolic.svg")
+    });
+
     notification.setTransient(true);
 
     source.notify(notification);
