@@ -33,7 +33,7 @@ const Pomodoro = new Lang.Class({
 
     this._initTimer();
 
-    let hbox = new St.BoxLayout({
+    this.hbox = new St.BoxLayout({
       style_class: 'panel-status-menu-box'}
     );
 
@@ -47,10 +47,10 @@ const Pomodoro = new Lang.Class({
       icon_size: 12
     });
 
-    hbox.add_actor(this._label);
-    hbox.add_actor(this._icon);
+    this.hbox.add_actor(this._label);
+    this.hbox.add_actor(this._icon);
 
-    this.actor.add_actor(hbox);
+    this.actor.add_actor(this.hbox);
     this.actor.add_style_class_name('panel-status-button');
 
     Main.panel.addToStatusArea('Pomodoro', this);
@@ -111,6 +111,9 @@ const Pomodoro = new Lang.Class({
   },
 
   destroy: function() {
+
+    delete this.hbox;
+
     this.parent.destroy();
   },
 
